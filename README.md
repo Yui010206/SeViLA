@@ -8,14 +8,14 @@
 # Code structure
 ```bash
 # LAVIS library
-./LAVIS/
+./lavis/
 
 
 # Data & Data Preprocessing
 ./data
 
 # running scripts for SeViLa localizer/answerer training
-./scripts
+./run_scripts
 
 # Pretrained checkpoints
 ./checkpoints
@@ -25,8 +25,19 @@
 # Setup
 
 ## Install Dependencies
-Our work is based on Saleforce [LAVIS](https://github.com/salesforce/LAVIS) library, please refer to Installation section in LAVIS.
 
+1. (Optional) Creating conda environment
+
+```bash
+conda create -n sevila python=3.8
+conda activate sevila
+```
+
+2. build from source
+
+```bash
+pip install -e .
+```
 
 ## Download Pretrained models
 We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [google drive](https://drive.google.com/file/d/17n7Y8IcwSqFfVu2BzIL58bF-F1HPK8cB/view?usp=sharing).
@@ -49,39 +60,31 @@ We test our model on:
 
 + [QVHighlights](https://github.com/jayleicn/moment_detr)
 
-please download original data and preprocess them via our [scripts](data/). 
+please download original data and preprocess them via our [scripts](data/) under ./data/. 
 
 
 # Training and Inference
-We provideo SeViLA training and inference scripts as following:
+We provideo SeViLA training and inference script examples as following:
 ## 1) Localizer Pre-training
 ```bash
-cd LAVIS
-
 sh run_scripts/sevila/pre-train/pretrain_qvh.sh
 ```
 
 ## 2) Localizer Self-refinement
 
 ```bash
-cd LAVIS
-
 sh run_scripts/sevila/refinement/nextqa_sr.sh
 ```
 
 ## 3) Answerer Fine-tuning
 
 ```bash
-cd LAVIS
-
 sh run_scripts/sevila/finetune/nextqa_ft.sh
 ```
 
 ## 4) Inference
 
 ```bash
-cd LAVIS
-
 sh run_scripts/sevila/inference/nextqa_infer.sh
 ```
 
