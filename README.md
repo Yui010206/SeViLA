@@ -4,21 +4,25 @@
 * [arXiv]()
 <img src="./assets/teaser.png" alt="teaser image" width="800"/>
 
+<img src="./assets/model.png" alt="teaser image" width="800"/>
+
+<img src="./assets/chain.png" alt="teaser image" width="800"/>
+
 
 # Code structure
 ```bash
+
+# Data & Data Preprocessing
+./sevila_data
+
+# Pretrained checkpoints
+./sevila_checkpoints
+
 # LAVIS library
 ./lavis/
 
-
-# Data & Data Preprocessing
-./data
-
 # running scripts for SeViLa localizer/answerer training
 ./run_scripts
-
-# Pretrained checkpoints
-./checkpoints
 
 ```
 
@@ -90,4 +94,4 @@ sh run_scripts/sevila/inference/nextqa_infer.sh
 
 
 # Acknowledgments
-We thank the developers of [LAVIS](https://github.com/clip-vil/CLIP-ViL/tree/master/CLIP-ViL-Direct/caption), [CLIP](https://github.com/openai/CLIP), [All-in-one](https://github.com/showlab/all-in-one), for their public code release.
+We thank the developers of [LAVIS](https://github.com/salesforce/LAVIS), [BLIP-2](https://github.com/salesforce/LAVIS/tree/main/projects/blip2), [CLIP](https://github.com/openai/CLIP), [All-in-one](https://github.com/showlab/all-in-one), for their public code release.
