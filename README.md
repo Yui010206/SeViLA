@@ -18,8 +18,8 @@
 # Pretrained checkpoints
 ./sevila_checkpoints
 
-# LAVIS library
-./lavis/
+# SeViLa code
+./sevila/
 
 # running scripts for SeViLa localizer/answerer training
 ./run_scripts
