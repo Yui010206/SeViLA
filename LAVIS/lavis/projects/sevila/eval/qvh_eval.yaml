@@ -1,0 +1,52 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+# Overall Accuracy is: 41.22
+
+model:
+  arch: blip2_fmr
+  model_type: pretrain_flant5xl
+  load_finetuned: True
+  finetuned: 'checkpoints/blip2_pretrained_flant5xl.pth'
+  use_grad_checkpoint: False
+  freeze_vit: True
+
+datasets:
+  qvh:
+    vis_processor:
+        eval:
+          name: "blip_video_eval"
+          n_frms: 64
+          image_size: 224
+    text_processor:
+        eval:
+          name: "blip_question"
+          max_words: 50
+
+run:
+  task: moment_retrieval
+  # optimization-specific
+  batch_size_train: 16
+  batch_size_eval: 32
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  inference_method: "generate"
+
+  seed: 42
+  output_dir: ""
+
+  evaluate: True
+  test_splits: ["val"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True
+  ind_unused_parameters: False
