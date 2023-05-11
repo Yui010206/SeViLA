@@ -45,7 +45,7 @@ pip install -e .
 
 ## Download Pretrained models
 We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [google drive](https://drive.google.com/file/d/17n7Y8IcwSqFfVu2BzIL58bF-F1HPK8cB/view?usp=sharing).
-Download checkpoints and put it under /checkpoints.
+Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
 
@@ -64,7 +64,7 @@ We test our model on:
 
 + [QVHighlights](https://github.com/jayleicn/moment_detr)
 
-please download original data and preprocess them via our [scripts](data/) under ./data/. 
+please download original data and preprocess them via our [scripts](data/) under ./sevila_data/ . 
 
 
 # Training and Inference
