@@ -64,7 +64,7 @@ We test our model on:
 
 + [QVHighlights](https://github.com/jayleicn/moment_detr)
 
-please download original data and preprocess them via our [scripts](data/) under ./sevila_data/ . 
+please download original data and preprocess them via our [scripts](sevila_data/) under ./sevila_data/ . 
 
 
 # Training and Inference
