@@ -1,7 +1,7 @@
 # Self-Chained Image-Language Model for Video Localization and Question Answering
 
 * Authors: [Shoubin Yu](https://yui010206.github.io/), [Jaemin Cho](https://j-min.io), [Prateek Yadav](https://prateek-yadav.github.io/), [Mohit Bansal](https://www.cs.unc.edu/~mbansal/)
-* [arXiv]()
+* [arXiv](https://arxiv.org/abs/2305.06988)
 <img src="./assets/teaser.png" alt="teaser image" width="800"/>
 
 <img src="./assets/model.png" alt="teaser image" width="800"/>
