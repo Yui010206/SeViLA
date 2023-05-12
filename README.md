@@ -19,7 +19,7 @@
 ./sevila_checkpoints
 
 # SeViLa code
-./sevila/
+./lavis/
 
 # running scripts for SeViLa localizer/answerer training
 ./run_scripts
