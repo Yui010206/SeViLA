@@ -95,3 +95,18 @@ sh run_scripts/sevila/inference/nextqa_infer.sh
 
 # Acknowledgments
 We thank the developers of [LAVIS](https://github.com/salesforce/LAVIS), [BLIP-2](https://github.com/salesforce/LAVIS/tree/main/projects/blip2), [CLIP](https://github.com/openai/CLIP), [All-in-one](https://github.com/showlab/all-in-one), for their public code release.
+
+
+# Reference
+Please cite our paper if you use our models in your works:
+
+
+```bibtex
+@misc{yu2023selfchained,
+      title={Self-Chained Image-Language Model for Video Localization and Question Answering}, 
+      author={Shoubin Yu and Jaemin Cho and Prateek Yadav and Mohit Bansal},
+      year={2023},
+      eprint={2305.06988},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
