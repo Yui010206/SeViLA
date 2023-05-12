@@ -44,7 +44,7 @@ pip install -e .
 ```
 
 ## Download Pretrained models
-We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [google drive](https://drive.google.com/file/d/17n7Y8IcwSqFfVu2BzIL58bF-F1HPK8cB/view?usp=sharing).
+We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [google drive](https://drive.google.com/file/d/17n7Y8IcwSqFfVu2BzIL58bF-F1HPK8cB/view?usp=sharing) and [Huggingface](https://huggingface.co/Shoubin/SeViLA/resolve/main/sevila_pretrained.pth).
 Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
