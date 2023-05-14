@@ -13,7 +13,6 @@ model:
   frame_num: 8
   answer_num: 5
   task: train_loc_freeze_qa_vid
-  qformer_input_text: False
 
 datasets:
   nextqa: # name of the dataset builder

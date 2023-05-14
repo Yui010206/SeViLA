@@ -71,6 +71,55 @@ def load_video(video_path, n_frms=MAX_INT, height=-1, width=-1, sampling="unifor
 
     return frms, indices, fps
 
+def load_video_demo(video_path, n_frms=MAX_INT, height=-1, width=-1, sampling="uniform", clip_proposal=None):
+    vr = VideoReader(uri=video_path, height=height, width=width)
+    vlen = len(vr)
+    n_frms = min(n_frms, vlen)
+    fps = vr.get_avg_fps() 
+    if clip_proposal is None:
+        start, end = 0, vlen
+    else:
+        start, end = int(clip_proposal[0]*fps), int(clip_proposal[1]*fps)
+        if start < 0:
+            start = 0
+        if end > vlen:
+            end = vlen
+
+    intervals = np.linspace(start=start, stop=end, num=n_frms + 1).astype(int)
+    ranges = []
+    for idx, interv in enumerate(intervals[:-1]):
+        ranges.append((interv, intervals[idx + 1]))
+
+    if sampling == 'random':
+        indices = []
+        for x in ranges:
+            if x[0] == x[1]:
+                indices.append(x[0])
+            else:
+                indices.append(rnd.choice(range(x[0], x[1])))
+    elif sampling == 'uniform':
+        
+        indices = [(x[0] + x[1]) // 2 for x in ranges]
+
+    elif sampling == "headtail":
+        indices_h = sorted(rnd.sample(range(vlen // 2), n_frms // 2))
+        indices_t = sorted(rnd.sample(range(vlen // 2, vlen), n_frms // 2))
+        indices = indices_h + indices_t
+    else:
+        raise NotImplementedError
+    
+    if len(indices) < n_frms:
+        rest = [indices[-1] for i in range(n_frms - len(indices))]
+        indices = indices + rest 
+    # get_batch -> T, H, W, C
+    
+    frms = vr.get_batch(indices)
+    frms = frms.asnumpy()
+    frms = torch.from_numpy(frms)
+    frms = frms.permute(3, 0, 1, 2).float()  # (C, T, H, W)
+
+    return frms, indices, fps
+
 def apply_to_sample(f, sample):
     if len(sample) == 0:
         return {}

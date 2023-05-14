@@ -15,13 +15,13 @@
 # Data & Data Preprocessing
 ./sevila_data
 
-# Pretrained checkpoints
+# Pretrained Checkpoints
 ./sevila_checkpoints
 
-# SeViLa code
+# SeViLA code
 ./lavis/
 
-# running scripts for SeViLa localizer/answerer training
+# running scripts for SeViLa localizer/answerer training/inference
 ./run_scripts
 
 ```
@@ -43,14 +43,14 @@ conda activate sevila
 pip install -e .
 ```
 
-## Download Pretrained models
+## Download Pretrained Models
 We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [Huggingface](https://huggingface.co/Shoubin/SeViLA/resolve/main/sevila_pretrained.pth).
 Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
 
 
-# Dataset preparation
+# Dataset Preparation
 We test our model on:
 + [NExT-QA](https://doc-doc.github.io/docs/nextqa.html)
 

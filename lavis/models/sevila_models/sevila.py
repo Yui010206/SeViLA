@@ -28,7 +28,6 @@ class SeViLA(Blip2Base):
         >>> from lavis.models import load_model
         >>> model = load_model("blip2_t5", "pretrain_flant5xl")
     """
-
     PRETRAINED_MODEL_CONFIG_DICT = {
         "pretrain_flant5xl": "configs/models/blip2/blip2_pretrain_flant5xl.yaml",
         "pretrain_flant5xxl": "configs/models/blip2/blip2_pretrain_flant5xxl.yaml",
@@ -684,6 +683,188 @@ class SeViLA(Blip2Base):
             out['qid'] = [q for q in qid for i in range(t)]
         else:
             out['answer'] = answer
+            out['qid'] = qid
+
+        return out
+    
+    @torch.no_grad()
+    def generate_demo(self,
+        video,
+        text_input_qa,
+        text_input_loc,
+        keyframe_num,
+        qid='demo',
+        use_nucleus_sampling=False,
+        num_beams=5, max_length=30,
+        min_length=1, top_p=0.9,
+        repetition_penalty=1.0, length_penalty=1.0,
+        num_captions=1, temperature=1,):
+        """
+        Args:
+            samples (dict): A dictionary containing the following keys:
+                - image (torch.Tensor): A tensor of shape (batch_size, 3, H, W)
+            use_nucleus_sampling (bool): Whether to use nucleus sampling. If False, use top-k sampling.
+            num_beams (int): Number of beams for beam search. 1 means no beam search.
+            max_length (int): The maximum length of the sequence to be generated.
+            min_length (int): The minimum length of the sequence to be generated.
+            top_p (float): The cumulative probability for nucleus sampling.
+            repetition_penalty (float): The parameter for repetition penalty. 1.0 means no penalty.
+            num_captions (int): Number of captions to be generated for each image.
+        Returns:
+            captions (list): A list of strings of length batch_size * num_captions.
+        """
+        out = {}
+        image, qid = video, qid
+        text_input_qa, answer = text_input_qa, 0
+        
+        # inference with localizer             
+            
+        b, t, c, w, h = image.shape        
+        image = image.reshape(-1, c, w, h)
+        with torch.cuda.amp.autocast(enabled=(self.device != torch.device("cpu"))):
+            image_embeds = self.visual_encoder(image) # bt, n, c
+                
+        _, n, _ = image_embeds.shape
+        image_atts = torch.ones(image_embeds.size()[:-1], dtype=torch.long).to(image.device) # bt n c
+        image_embeds_, image_atts_ = image_embeds.detach().clone(), image_atts.detach().clone()
+        image_embeds_ = self.ln_vision_loc(image_embeds_)
+            
+        text_input_loc = text_input_loc # Q + Prompt: Is this a good frame can answer the question?
+        query_tokens_loc = self.query_tokens_loc.expand(image_embeds_.shape[0], -1, -1)
+        query_output_loc = self.Qformer_loc.bert(
+            query_embeds=query_tokens_loc, encoder_hidden_states=image_embeds_,
+            encoder_attention_mask=image_atts_, return_dict=True)
+        inputs_t5_loc = self.t5_proj_loc(query_output_loc.last_hidden_state)
+
+        atts_t5_loc = torch.ones(inputs_t5_loc.size()[:-1], dtype=torch.long).to(image.device)
+        with torch.cuda.amp.autocast(dtype=torch.bfloat16):
+
+            frame_prefix = self.t5_tokenizer(
+                self.frame_prefix, padding="longest", add_special_tokens=False,
+                truncation=True, max_length=self.max_txt_len, return_tensors="pt").to(image.device) # 
+                #print('frame_prefix 1', frame_prefix.input_ids.shape) 8, 4
+            frame_prefix_id = torch.repeat_interleave(frame_prefix.input_ids, b*t, 0)
+            frame_prefix_mask = torch.repeat_interleave(frame_prefix.attention_mask, b*t, 0)
+            frame_predix_embed = self.t5_model.encoder.embed_tokens(frame_prefix_id)
+            input_tokens_loc = self.t5_tokenizer(
+                text_input_loc, padding="longest", truncation=True,
+                max_length=self.max_txt_len, return_tensors="pt").to(image.device)
+                #print('input_ids_loc.input_ids', input_tokens_loc.input_ids)
+            input_ids_loc = torch.repeat_interleave(input_tokens_loc.input_ids, t, 0)
+                #print('input_ids_loc', input_ids_loc)
+            input_attention_mask_loc = torch.repeat_interleave(input_tokens_loc.attention_mask, t, 0)
+            inputs_embeds_loc = self.t5_model.encoder.embed_tokens(input_ids_loc)              
+            inputs_embeds_loc = torch.cat([frame_predix_embed, inputs_t5_loc, inputs_embeds_loc], dim=1)
+            encoder_atts_loc = torch.cat([frame_prefix_mask, atts_t5_loc, input_attention_mask_loc], dim=1)
+    
+            outputs_loc = self.t5_model.generate(
+                inputs_embeds=inputs_embeds_loc, attention_mask=encoder_atts_loc,
+                do_sample=use_nucleus_sampling, top_p=top_p, temperature=temperature, num_beams=1,
+                max_new_tokens=max_length, min_length=min_length, repetition_penalty=repetition_penalty,
+                length_penalty=length_penalty, num_return_sequences=num_captions,
+                return_dict_in_generate=True, output_hidden_states=True, output_scores=True)
+                        
+            pred_logits_loc = outputs_loc.scores[0]
+            loc_yes = pred_logits_loc[:, self.yes_id]
+            loc_yes = loc_yes.reshape(b, -1)
+            if 'qa_vid' in self.task:
+                select_frames_idx = torch.topk(loc_yes, keyframe_num, dim=-1).indices.tolist()
+                sorted_frames_idx = []
+                image_embeds = self.ln_vision(image_embeds)
+                image_embeds = image_embeds.reshape(b, t, n, -1)
+                for frames in select_frames_idx:
+                    sorted_frames_idx.append(sorted(frames))
+                out['frame_idx'] = sorted_frames_idx
+                select_frames = []
+                for i, fs in enumerate(sorted_frames_idx): 
+                    video = []
+                    for j, f in enumerate(fs):
+                        video.append(image_embeds[i][f])
+                    video = torch.stack(video, dim=0)
+                    select_frames.append(video)
+                    
+                select_frames = torch.stack(select_frames, dim=0) # b 4, n , -1
+                select_frames = select_frames.reshape(-1, select_frames.shape[-2], select_frames.shape[-1])
+                image_atts = torch.ones(select_frames.size()[:-1], dtype=torch.long).to(image.device) # bt n c
+                query_tokens_qa = self.query_tokens.expand(select_frames.shape[0], -1, -1)
+                query_output_qa = self.Qformer.bert(
+                    query_embeds=query_tokens_qa, encoder_hidden_states=select_frames,
+                    encoder_attention_mask=image_atts, return_dict=True)
+                inputs_t5_qa = self.t5_proj(query_output_qa.last_hidden_state)
+                inputs_t5_qa = inputs_t5_qa.reshape(b, -1, inputs_t5_qa.shape[-2], inputs_t5_qa.shape[-1])
+                atts_t5_qa = torch.ones(inputs_t5_qa.size()[:-1], dtype=torch.long).to(image.device)
+                
+                vid_prefix = self.t5_tokenizer(
+                        self.vid_prefix, padding="longest", add_special_tokens=False,
+                        truncation=True, max_length=self.max_txt_len, return_tensors="pt",).to(image.device) # 
+                vid_prefix_id = torch.repeat_interleave(vid_prefix.input_ids.unsqueeze(0), b, 0)
+                vid_prefix_mask = torch.repeat_interleave(vid_prefix.attention_mask.unsqueeze(0), b, 0)
+                vid_prefix_embed = self.t5_model.encoder.embed_tokens(vid_prefix_id) # b t n_word c
+                    
+                inputs_t5_qa = torch.cat([vid_prefix_embed, inputs_t5_qa], dim=2) # b, t, n_word + m, c
+                atts_t5_qa = torch.cat([vid_prefix_mask, atts_t5_qa], dim=2) # b, t, n_word + m 
+                inputs_t5_qa = inputs_t5_qa.reshape(b, -1, inputs_t5_qa.shape[-1])
+                atts_t5_qa = atts_t5_qa.reshape(b, -1)
+                    
+                input_tokens_qa = self.t5_tokenizer(
+                        text_input_qa, padding="longest", truncation=True,
+                        max_length=self.max_txt_len, return_tensors="pt").to(image.device)
+                inputs_embeds_qa = self.t5_model.encoder.embed_tokens(input_tokens_qa.input_ids) 
+                inputs_embeds_qa = torch.cat([inputs_t5_qa, inputs_embeds_qa], dim=1)
+                encoder_atts_qa = torch.cat([atts_t5_qa, input_tokens_qa.attention_mask], dim=1)
+                    
+            else:
+                select_frames_idx = torch.argmax(loc_yes, -1)
+                select_frames = []
+                image_embeds = self.ln_vision(image_embeds)
+                image_embeds = image_embeds.reshape(b, t, n, -1)
+                for i, f in enumerate(select_frames_idx):
+                    select_frames.append(image_embeds[i][f])
+                        
+                select_frames = torch.stack(select_frames, dim=0)
+                image_atts = torch.ones(select_frames.size()[:-1], dtype=torch.long).to(image.device) # bt n c
+                query_tokens_qa = self.query_tokens.expand(select_frames.shape[0], -1, -1)
+                query_output_qa = self.Qformer.bert(
+                    query_embeds=query_tokens_qa, encoder_hidden_states=select_frames,
+                        encoder_attention_mask=image_atts, return_dict=True)
+                inputs_t5_qa = self.t5_proj(query_output_qa.last_hidden_state)
+                atts_t5_qa = torch.ones(inputs_t5_qa.size()[:-1], dtype=torch.long).to(image.device)
+                    
+                frame_prefix = self.t5_tokenizer(
+                        self.frame_prefix, padding="longest", add_special_tokens=False, 
+                        truncation=True, max_length=self.max_txt_len, return_tensors="pt").to(image.device) # 
+                frame_prefix_id = torch.repeat_interleave(frame_prefix.input_ids, b, 0)
+                frame_prefix_mask = torch.repeat_interleave(frame_prefix.attention_mask, b, 0)
+
+                input_tokens_qa = self.t5_tokenizer(
+                    text_input_qa, padding="longest", truncation=True,
+                    max_length=self.max_txt_len, return_tensors="pt").to(image.device)
+
+                frame_predix_embed = self.t5_model.encoder.embed_tokens(frame_prefix_id)
+                inputs_embeds_qa = self.t5_model.encoder.embed_tokens(input_tokens_qa.input_ids)
+
+                inputs_embeds_qa = torch.cat([frame_predix_embed, inputs_t5_qa, inputs_embeds_qa], dim=1)
+                encoder_atts_qa = torch.cat([frame_prefix_mask, atts_t5_qa, input_tokens_qa.attention_mask], dim=1)
+                            
+            outputs_qa = self.t5_model.generate(
+                    inputs_embeds=inputs_embeds_qa, attention_mask=encoder_atts_qa,
+                    do_sample=use_nucleus_sampling, top_p=top_p,
+                    temperature=temperature, num_beams=1,
+                    max_new_tokens=max_length, min_length=min_length,
+                    repetition_penalty=repetition_penalty, length_penalty=length_penalty,
+                    num_return_sequences=num_captions, return_dict_in_generate=True,
+                    output_hidden_states=True, output_scores=True)
+            pred_logits_qa = outputs_qa.scores[1]
+            pred_logits_qa = pred_logits_qa[:, self.answer_id] # b, 5
+            pred_ans = torch.argmax(pred_logits_qa, dim=-1).cpu().tolist()
+        
+        out['output_text'] = pred_ans
+        if 'qa_vid' not in self.task: 
+            out['temp_idx'] = [j for i in range(b) for j in range(t)]
+            # out['answer'] = [a for a in answer for i in range(t)]
+            out['qid'] = [q for q in qid for i in range(t)]
+        else:
+            # out['answer'] = answer
             out['qid'] = qid
 
         return out

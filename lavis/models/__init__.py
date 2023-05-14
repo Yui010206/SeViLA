@@ -83,7 +83,7 @@ __all__ = [
     "VisionTransformerEncoder",
     "XBertLMHeadDecoder",
     "GPTDialogue",
-    "Blip2FMR"
+    "Blip2FMR",
     "SeViLA",
 ]
 
@@ -203,6 +203,7 @@ def load_model_and_preprocess(name, model_type, is_eval=False, device="cpu"):
 
     # load preprocess
     cfg = OmegaConf.load(model_cls.default_config_path(model_type))
+    # print(cfg)
     if cfg is not None:
         preprocess_cfg = cfg.preprocess
 

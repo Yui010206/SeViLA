@@ -317,7 +317,7 @@ class AOKVQATask(VQATask):
         logging.info(f"Saved results for leaderboard evaluation at {result_file}")
     
 @registry.register_task("frameqa")
-class Frameqa(BaseTask):
+class FrameQA(BaseTask):
     def __init__(self):
         super().__init__()
         self.ANS_MAPPING = {'A':0, 'B':1, 'C':2, 'D':3, 'E':4}

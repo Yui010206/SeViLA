@@ -1,0 +1,45 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: sevila
+  model_type: pretrain_flant5xl
+  load_finetuned: False
+  pretrained: "https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_flant5xl.pth"
+  finetuned: ""
+  use_grad_checkpoint: False
+  image_size: 224
+  drop_path_rate: 0
+  vit_precision: "fp16"
+  freeze_vit: True
+  frame_num: 8
+  answer_num: 5
+  task: train_loc_freeze_qa_vid
+
+  # Q-Former
+  num_query_token: 32
+  # T5
+  t5_model: "google/flan-t5-xl"
+  # generation configs
+  prompt: ""
+
+
+preprocess:
+    vis_processor:
+        train:
+          name: "blip2_video_train"
+          n_frms: 32
+          image_size: 224
+        eval:
+          name: "blip_video_eval"
+          n_frms: 32
+          image_size: 224
+    text_processor:
+        train:
+          name: "blip_question"
+          max_words: 50
+        eval:
+          name: "blip_question"
+          max_words: 50
