@@ -104,11 +104,9 @@ Please cite our paper if you use our models in your works:
 
 
 ```bibtex
-@misc{yu2023selfchained,
-      title={Self-Chained Image-Language Model for Video Localization and Question Answering}, 
-      author={Shoubin Yu and Jaemin Cho and Prateek Yadav and Mohit Bansal},
-      year={2023},
-      eprint={2305.06988},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@article{yu2023self,
+  title={Self-Chained Image-Language Model for Video Localization and Question Answering},
+  author={Yu, Shoubin and Cho, Jaemin and Yadav, Prateek and Bansal, Mohit},
+  journal={arXiv preprint arXiv:2305.06988},
+  year={2023}
 }
