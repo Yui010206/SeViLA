@@ -1,8 +1,8 @@
 # Self-Chained Image-Language Model for Video Localization and Question Answering
 
 * Authors: [Shoubin Yu](https://yui010206.github.io/), [Jaemin Cho](https://j-min.io), [Prateek Yadav](https://prateek-yadav.github.io/), [Mohit Bansal](https://www.cs.unc.edu/~mbansal/)
-* [arXiv](https://arxiv.org/abs/2305.06988)
-* Try our demo on [Hugging Face](https://huggingface.co/spaces/Shoubin/SeViLA)
+* Paper: [arXiv](https://arxiv.org/abs/2305.06988)
+* Online Demo :Try our Gradio demo on Hugging Face [![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-md-dark.svg)](https://huggingface.co/spaces/Shoubin/SeViLA)
 
 <img src="./assets/teaser.png" alt="teaser image" width="800"/>
 
@@ -50,7 +50,21 @@ We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [Hugging 
 Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
+# Run Gradio Demo Locally
+We also provide a UI for testing our SeViLA locally that is built with gradio. 
+Running demo locally requires about 12GB of memory.
 
+* Installing Gradio:
+
+```bash
+pip install gradio==3.30.0
+```
+
+* Running the following command in a terminal will launch the demo:
+
+```bash
+python app.py
+```
 
 # Dataset Preparation
 We test our model on:
@@ -66,11 +80,14 @@ We test our model on:
 
 + [QVHighlights](https://github.com/jayleicn/moment_detr)
 
-please download original data and preprocess them via our [scripts](sevila_data/) under ./sevila_data/ . 
+Please download original QA data and preprocess them via our [scripts](sevila_data/).
 
 
 # Training and Inference
-We provideo SeViLA training and inference script examples as following:
+We provide SeViLA training and inference script examples as follows.
+
+And please refer to [dataset page](sevila_data/) to custom your data path.
+
 ## 1) Localizer Pre-training
 ```bash
 sh run_scripts/sevila/pre-train/pretrain_qvh.sh
@@ -96,7 +113,7 @@ sh run_scripts/sevila/inference/nextqa_infer.sh
 
 
 # Acknowledgments
-We thank the developers of [LAVIS](https://github.com/salesforce/LAVIS), [BLIP-2](https://github.com/salesforce/LAVIS/tree/main/projects/blip2), [CLIP](https://github.com/openai/CLIP), [All-in-one](https://github.com/showlab/all-in-one), for their public code release.
+We thank the developers of [LAVIS](https://github.com/salesforce/LAVIS), [BLIP-2](https://github.com/salesforce/LAVIS/tree/main/projects/blip2), [CLIP](https://github.com/openai/CLIP), [All-in-One](https://github.com/showlab/all-in-one), for their public code release.
 
 
 # Reference

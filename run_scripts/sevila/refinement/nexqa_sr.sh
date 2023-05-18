@@ -16,5 +16,5 @@ run.max_epoch=10 \
 run.warmup_steps=500 \
 run.accum_grad_iters=1 \
 model.task='train_loc_freeze_qa_vid' \
-model.finetuned=${result_dir}${ckpt} \
+model.finetuned=${ckpt} \
 run.task='videoqa'

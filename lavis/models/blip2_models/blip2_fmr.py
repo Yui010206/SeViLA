@@ -47,7 +47,7 @@ class Blip2FMR(Blip2Base):
         self.task = task
         
         # vision backbone
-        self.visual_encoder, self.ln_vision_loc, _ = self.init_vision_encoder(
+        self.visual_encoder, self.ln_vision_loc = self.init_vision_encoder(
         img_size, drop_path_rate, use_grad_checkpoint, vit_precision)
         # Freeze ViT
         if freeze_vit:

@@ -7,8 +7,6 @@
 model:
   arch: blip2_fmr
   model_type: pretrain_flant5xl
-  load_finetuned: True
-  finetuned: 'checkpoints/blip2_pretrained_flant5xl.pth'
   use_grad_checkpoint: False
   freeze_vit: True
 
