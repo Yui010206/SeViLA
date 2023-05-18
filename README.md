@@ -2,7 +2,7 @@
 
 * Authors: [Shoubin Yu](https://yui010206.github.io/), [Jaemin Cho](https://j-min.io), [Prateek Yadav](https://prateek-yadav.github.io/), [Mohit Bansal](https://www.cs.unc.edu/~mbansal/)
 * Paper: [arXiv](https://arxiv.org/abs/2305.06988)
-* Online Demo :Try our Gradio demo on Hugging Face [![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm-dark.svg)(https://huggingface.co/spaces/Shoubin/SeViLA)
+* Online Demo :Try our Gradio demo on Hugging Face [![Open in Spaces]([https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm-dark.svg)](https://huggingface.co/datasets/huggingface/badges/raw/main/open-in-hf-spaces-sm.svg))](https://huggingface.co/spaces/Shoubin/SeViLA)
 
 <img src="./assets/teaser.png" alt="teaser image" width="800"/>
 
