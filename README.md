@@ -50,6 +50,8 @@ We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [Hugging 
 Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
+If you want to pre-train your own localizer, you can download [qformer_loc.pth](https://drive.google.com/file/d/13hE_BQDflkzYrHVmVGddRSt8VMa0ouGB/view?usp=sharing), which is a copy of the original BLIP-2 Q-former to initialize the localizer (with changed model keys).
+
 # Run Gradio Demo Locally
 We also provide a UI for testing our SeViLA locally that is built with gradio. 
 Running demo locally requires about 12GB of memory.
