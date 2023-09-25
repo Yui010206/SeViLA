@@ -1,4 +1,4 @@
-# Self-Chained Image-Language Model for Video Localization and Question Answering
+# [NeurIPS 2023] Self-Chained Image-Language Model for Video Localization and Question Answering
 
 * Authors: [Shoubin Yu](https://yui010206.github.io/), [Jaemin Cho](https://j-min.io), [Prateek Yadav](https://prateek-yadav.github.io/), [Mohit Bansal](https://www.cs.unc.edu/~mbansal/)
 * Paper: [arXiv](https://arxiv.org/abs/2305.06988)
