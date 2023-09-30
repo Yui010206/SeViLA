@@ -186,7 +186,7 @@ def concat_datasets(datasets):
     It supports may-style datasets and DataPipeline from WebDataset. Currently, does not support
     generic IterableDataset because it requires creating separate samplers.
 
-    Now only supports conctenating training datasets and assuming validation and testing
+    Now only supports concatenating training datasets and assuming validation and testing
     have only a single dataset. This is because metrics should not be computed on the concatenated
     datasets.
 
@@ -345,7 +345,7 @@ def save_frames_grid(img_array, out_path):
             "Supports only (b,t,c,h,w)-shaped inputs. First two dimensions can be ignored."
         )
 
-    assert img_array.shape[1] == 3, "Exepcting input shape of (H, W, 3), i.e. RGB-only."
+    assert img_array.shape[1] == 3, "Expecting input shape of (H, W, 3), i.e. RGB-only."
 
     grid = make_grid(img_array)
     ndarr = grid.permute(1, 2, 0).to("cpu", torch.uint8).numpy()
