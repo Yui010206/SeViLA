@@ -150,7 +150,7 @@ with gr.Blocks(title="SeViLA demo") as demo:
     <p>
         To locate keyframes in a video and answer question, please:
         <br>
-        (1) upolad your video; (2) write your question/options and set # video frame/# keyframe; (3) click Locate and Answer!
+        (1) upload your video; (2) write your question/options and set # video frame/# keyframe; (3) click Locate and Answer!
         <br>
         Just a heads up - loading the SeViLA model can take a few minutes (typically 2-3), and running examples requires about 12GB of memory.
         <br>
