@@ -71,7 +71,7 @@ class Config:
         model_config_path = model_cls.default_config_path(model_type=model_type)
 
         model_config = OmegaConf.create()
-        # hiararchy override, customized config > default config
+        # hierarchy override, customized config > default config
         model_config = OmegaConf.merge(
             model_config,
             OmegaConf.load(model_config_path),
@@ -102,7 +102,7 @@ class Config:
                 type=dataset_config_type
             )
 
-            # hiararchy override, customized config > default config
+            # hierarchy override, customized config > default config
             dataset_config = OmegaConf.merge(
                 dataset_config,
                 OmegaConf.load(dataset_config_path),
@@ -268,7 +268,7 @@ def create_runner_config_validator():
         help="""Runner to use. The "runner_base" uses epoch-based training while iter-based
             runner runs based on iters. Default: runner_base""",
     )
-    # add argumetns for training dataset ratios
+    # add arguments for training dataset ratios
     validator.add_argument(
         "train_dataset_ratios",
         type=Dict[str, float],
@@ -454,8 +454,8 @@ def create_runner_config_validator():
     validator.add_argument(
         "inference_method",
         type=str,
-        choices=["genearte", "rank"],
-        help="""Inference method to use for question answering. If rank, requires a answer list.""",
+        choices=["generate", "rank"],
+        help="""Inference method to use for question answering. If rank, requires an answer list.""",
     )
 
     # ====== model specific ======
