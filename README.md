@@ -95,16 +95,16 @@ And please refer to [dataset page](sevila_data/) to custom your data path.
 sh run_scripts/sevila/pre-train/pretrain_qvh.sh
 ```
 
-## 2) Localizer Self-refinement
-
-```bash
-sh run_scripts/sevila/refinement/nextqa_sr.sh
-```
-
-## 3) Answerer Fine-tuning
+## 2) Answerer Fine-tuning
 
 ```bash
 sh run_scripts/sevila/finetune/nextqa_ft.sh
+```
+
+## 3) Localizer Self-refinement
+
+```bash
+sh run_scripts/sevila/refinement/nextqa_sr.sh
 ```
 
 ## 4) Inference
