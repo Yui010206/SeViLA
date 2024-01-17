@@ -46,7 +46,7 @@ pip install -e .
 ```
 
 ## Download Pretrained Models
-We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [Hugging Face](https://huggingface.co/Shoubin/SeViLA/resolve/main/sevila_pretrained.pth).
+We pre-train SeViLA localizer on QVHighlights and hold checkpoints via [Huggingface](https://huggingface.co/Shoubin/SeViLA/resolve/main/sevila_pretrained.pth).
 Download checkpoints and put it under /sevila_checkpoints.
 The checkpoints (814.55M) contains pre-trained localizer and zero-shot answerer.
 
