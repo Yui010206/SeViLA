@@ -317,7 +317,7 @@ class VQAEval:
             progress = 1
             status = "Done...\r\n"
         block = int(round(barLength * progress))
-        text = "\rFinshed Percent: [{0}] {1}% {2}".format(
+        text = "\rFinished Percent: [{0}] {1}% {2}".format(
             "#" * block + "-" * (barLength - block), int(progress * 100), status
         )
         sys.stdout.write(text)

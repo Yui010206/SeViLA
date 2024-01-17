@@ -23,7 +23,7 @@ class SeViLA(Blip2Base):
     Supported model types:
         - pretrain_flant5xl: pretrained model with FlanT5-XL
         - pretrain_flant5xxl: pretrained model with FlanT5-XXL
-        - caption_coco_flant5xl: fintuned image captioning model with FlanT5-XL
+        - caption_coco_flant5xl: finetuned image captioning model with FlanT5-XL
     Usage:
         >>> from lavis.models import load_model
         >>> model = load_model("blip2_t5", "pretrain_flant5xl")
